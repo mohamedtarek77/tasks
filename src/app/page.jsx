@@ -7,7 +7,7 @@ async function getData() {
   try {
 
     // const res = await fetch("http://localhost:3000/api/posts/getposts");
-    const res = await fetch("https://taskstarek123.vercel.app/api/posts/getposts");
+    const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
 
     // const res = await fetch(`${process.env.DOMAIN}/api/posts/getposts`);
 
