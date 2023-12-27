@@ -111,38 +111,53 @@
 
 
 
+'use client'
 
+import React, { useEffect, useState } from "react";
+import Post from "../components/Post";
+import AddTaskBtn from "../components/AddTaskBtn";
 
+async function getData() {
+  try {
+    const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
 
+    if (!res.ok) {
+      throw new Error("Failed to fetch data");
+    }
 
-import React from "react";
-import Post from "../components/Post"
-import AddTaskBtn from "../components/AddTaskBtn"
-
-export async function getStaticProps() {
-  const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
   }
-
-  const data = await res.json();
-
-  return {
-    props: {
-      posts: data.data,
-    },
-    revalidate: 60, // revalidate every 60 seconds
-  };
 }
 
-export default function Page({ posts }) {
+export default function Page() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await getData();
+      setData(result);
+    };
+
+    fetchData();
+    // You can add a timer here to fetch data at regular intervals if needed
+
+    // Cleanup function
+    return () => {
+      // Cleanup logic if needed
+    };
+  }, []); // Empty dependency array ensures that the effect runs only once on component mount
+
+  console.log(data);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2  ">
+    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2">
       <div className="flex flex-wrap">
         <AddTaskBtn />
 
-        {posts.map((post) => (
+        {data?.data?.map((post) => (
           <Post key={post._id} post={post} />
         ))}
       </div>
