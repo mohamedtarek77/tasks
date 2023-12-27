@@ -111,37 +111,111 @@
 
 
 
+// 'use client'
+
+// import React, { useEffect, useState } from "react";
+// import Post from "../components/Post";
+// import AddTaskBtn from "../components/AddTaskBtn";
+
+// async function getData() {
+//   try {
+//     const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
+
+//     if (!res.ok) {
+//       throw new Error("Failed to fetch data");
+//     }
+
+//     return res.json();
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//     return null;
+//   }
+// }
+
+// export default function Page() {
+//   const [data, setData] = useState(null);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       const result = await getData();
+//       setData(result);
+//     };
+
+//     fetchData();
+//     // You can add a timer here to fetch data at regular intervals if needed
+
+//     // Cleanup function
+//     return () => {
+//       // Cleanup logic if needed
+//     };
+//   }, []); // Empty dependency array ensures that the effect runs only once on component mount
+
+//   console.log(data);
+
+//   return (
+//     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2">
+//       <div className="flex flex-wrap">
+//         <AddTaskBtn />
+
+//         {data?.data?.map((post) => (
+//           <Post key={post._id} post={post} />
+//         ))}
+//       </div>
+//     </main>
+//   );
+// }
+
+
+
 'use client'
 
 import React, { useEffect, useState } from "react";
 import Post from "../components/Post";
 import AddTaskBtn from "../components/AddTaskBtn";
 
-async function getData() {
-  try {
-    const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
+// This function fetches data on the server side
+export async function getServerSideProps() {
+  const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch data");
-    }
-
-    return res.json();
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
+  if (!res.ok) {
+    return {
+      notFound: true,
+    };
   }
+
+  const data = await res.json();
+
+  return {
+    props: {
+      data,
+    },
+  };
 }
 
-export default function Page() {
-  const [data, setData] = useState(null);
+// This function fetches data on the client side
+async function getClientData() {
+  const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
+
+  return res.json();
+}
+
+export default function Page({ data: initialData }) {
+  const [data, setData] = useState(initialData);
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await getData();
-      setData(result);
+      try {
+        const result = await getClientData();
+        setData(result);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
-    fetchData();
     // You can add a timer here to fetch data at regular intervals if needed
 
     // Cleanup function
