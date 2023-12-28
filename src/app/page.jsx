@@ -56,11 +56,12 @@
 
 
 
+
 import React from "react";
 import Post from "../components/Post"
 import AddTaskBtn from "../components/AddTaskBtn"
 
-import useSWR ,{preload} from "swr";
+import useSWR  from "swr";
 
 
 const fetcher = (url)=> fetch(url).then((res)=>res.json())
@@ -68,9 +69,11 @@ const fetcher = (url)=> fetch(url).then((res)=>res.json())
 // preload('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher)
 
 
-function Data (){
 
-  const {data,error}=useSWR('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher)
+
+export default  function Page() {
+
+const {data,error,isLoading }=useSWR('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher)
   console.log(data)
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2  ">
@@ -90,19 +93,10 @@ function Data (){
         </div>
       </>
     </main>
-);
 
+  );
 }
 
-
-
-export default async function Page() {
-
-return <Data/>
-  
-}
-
-  
 
 
 
