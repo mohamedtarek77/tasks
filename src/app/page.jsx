@@ -9,9 +9,9 @@ async function getData() {
     // const res = await fetch("http://localhost:3000/api/posts/getposts");
     const res = await fetch(`https://tasks-eight-rosy.vercel.app/api/posts/getposts?timestamp=<current-timestamp>`,
     
-    { cache: 'no-store' }
+    // { cache: 'no-store' }
 
-    // {next: { revalidate: 5 },}
+    {next: { revalidate: 10 },}
     
     
     );
