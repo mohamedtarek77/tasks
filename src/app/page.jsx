@@ -188,20 +188,31 @@ async function fetchData() {
 }
 
 export async function getServerSideProps() {
-  const data = await fetchData();
+  try {
+    const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
 
-  if (!data) {
+    if (!res.ok) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const data = await res.json();
+    console.log("Server-side data:", data); // Add this line for logging
+
+    return {
+      props: {
+        data,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching data during server-side rendering:", error);
     return {
       notFound: true,
     };
   }
-
-  return {
-    props: {
-      data,
-    },
-  };
 }
+
 
 export default function Page({ data: initialData }) {
   const [data, setData] = useState(initialData);
