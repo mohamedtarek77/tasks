@@ -60,26 +60,32 @@
 import React from "react";
 import Post from "../components/Post"
 import AddTaskBtn from "../components/AddTaskBtn"
-
-import useSWR  from "swr";
-
+import useSWR, { SWRConfig } from "swr";
 
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
-
+const API = "https://tasks-eight-rosy.vercel.app/api/posts/getposts";
 
 // preload('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher)
 
+export async function getServerSideProps() {
+  const repoInfo = await fetcher(API);
+  return {
+    props: {
+      fallback: {
+        [API]: repoInfo
+      }
+    }
+  };
+}
 
 
-
-export default  function Page() {
-
-const {data,error,isLoading }=useSWR('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher);
-  console.log(data);
+function Repo () {
+  const {data,error }=useSWR(API);
+  console.log("Is data ready?", !!data);
 
   if (error) return "An error has occurred.";
-  if (isLoading) return "Loading...";
+  if (!data) return "Loading...";
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2  ">
       <>
@@ -99,6 +105,15 @@ const {data,error,isLoading }=useSWR('https://tasks-eight-rosy.vercel.app/api/po
       </>
     </main>
 
+  );
+  
+}
+export default  function Page({fallback}) {
+
+  return (
+    <SWRConfig value={{ fallback }}>
+      <Repo />
+    </SWRConfig>
   );
 }
 
