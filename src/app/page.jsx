@@ -168,22 +168,33 @@
 
 
 'use client'
-
 import React, { useEffect, useState } from "react";
 import Post from "../components/Post";
 import AddTaskBtn from "../components/AddTaskBtn";
 
-// This function fetches data on the server side
-export async function getServerSideProps() {
-  const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
+async function fetchData() {
+  try {
+    const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error("Failed to fetch data");
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+}
+
+export async function getServerSideProps() {
+  const data = await fetchData();
+
+  if (!data) {
     return {
       notFound: true,
     };
   }
-
-  const data = await res.json();
 
   return {
     props: {
@@ -192,36 +203,23 @@ export async function getServerSideProps() {
   };
 }
 
-// This function fetches data on the client side
-async function getClientData() {
-  const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
-
-  return res.json();
-}
-
 export default function Page({ data: initialData }) {
   const [data, setData] = useState(initialData);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getClientData();
+    const fetchDataAndSetInterval = async () => {
+      await fetchData(); // Initial fetch
+
+      const intervalId = setInterval(async () => {
+        const result = await fetchData();
         setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+      }, 60000); // Update every 60 seconds
+
+      // Cleanup function
+      return () => clearInterval(intervalId);
     };
 
-    // You can add a timer here to fetch data at regular intervals if needed
-
-    // Cleanup function
-    return () => {
-      // Cleanup logic if needed
-    };
+    fetchDataAndSetInterval();
   }, []); // Empty dependency array ensures that the effect runs only once on component mount
 
   console.log(data);
