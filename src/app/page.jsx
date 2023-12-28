@@ -1,36 +1,81 @@
 
+import React from "react";
+import Post from "../components/Post"
+import AddTaskBtn from "../components/AddTaskBtn"
+
+async function getData() {
+  try {
+
+    const res = await fetch("http://localhost:3000/api/posts/getposts" ,  {next: { revalidate: 10 },});
+    // const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts?timestamp=<current-timestamp>",
+    
+    // // { cache: 'no-store' }
+
+    // {next: { revalidate: 10 },}
+    
+    
+    // );
+
+    // const res = await fetch(`${process.env.DOMAIN}/api/posts/getposts`);
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch data");
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+}
+
+export default async function Page() {
+  const data = await getData()
+  console.log(data)
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2  ">
+      <>
+
+      <div className="flex flex-wrap">
+            <AddTaskBtn />
+
+            {
+                data?.data?.map((post) => (
+                    <Post
+                        key={post._id}
+                        post={post}
+                
+                    />
+                ))}
+        </div>
+      </>
+    </main>
+
+  );
+}
+
+
+
+
+
+
 // import React from "react";
 // import Post from "../components/Post"
 // import AddTaskBtn from "../components/AddTaskBtn"
 
-// async function getData() {
-//   try {
+// import useSWR  from "swr";
 
-//     const res = await fetch("http://localhost:3000/api/posts/getposts" ,  {next: { revalidate: 10 },});
-//     // const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts?timestamp=<current-timestamp>",
-    
-//     // // { cache: 'no-store' }
 
-//     // {next: { revalidate: 10 },}
-    
-    
-//     // );
+// const fetcher = (url)=> fetch(url).then((res)=>res.json())
 
-//     // const res = await fetch(`${process.env.DOMAIN}/api/posts/getposts`);
+// // preload('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher)
 
-//     if (!res.ok) {
-//       throw new Error("Failed to fetch data");
-//     }
 
-//     return res.json();
-//   } catch (error) {
-//     console.error("Error fetching data:", error);
-//     return null;
-//   }
-// }
 
-// export default async function Page() {
-//   const data = await getData()
+
+// export default  function Page() {
+
+// const {data,error,isLoading }=useSWR('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher)
 //   console.log(data)
 //   return (
 //     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2  ">
@@ -53,69 +98,6 @@
 
 //   );
 // }
-
-
-
-
-import React from "react";
-import Post from "../components/Post"
-import AddTaskBtn from "../components/AddTaskBtn"
-import useSWR, { SWRConfig } from "swr";
-
-
-const fetcher = (url) => fetch(url).then((res) => res.json());
-const API = "https://tasks-eight-rosy.vercel.app/api/posts/getposts";
-
-// preload('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher)
-
-export async function getServerSideProps() {
-  const repoInfo = await fetcher(API);
-  return {
-    props: {
-      fallback: {
-        [API]: repoInfo
-      }
-    }
-  };
-}
-
-
-function Repo () {
-  const {data,error }=useSWR(API);
-  console.log("Is data ready?", !!data);
-
-  if (error) return "An error has occurred.";
-  if (!data) return "Loading...";
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2  ">
-      <>
-
-      <div className="flex flex-wrap">
-            <AddTaskBtn />
-
-            {
-                data?.data?.map((post) => (
-                    <Post
-                        key={post._id}
-                        post={post}
-                
-                    />
-                ))}
-        </div>
-      </>
-    </main>
-
-  );
-  
-}
-export default  function Page({fallback}) {
-
-  return (
-    <SWRConfig value={{ fallback }}>
-      <Repo />
-    </SWRConfig>
-  );
-}
 
 
 
