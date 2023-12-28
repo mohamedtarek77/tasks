@@ -65,7 +65,7 @@ import useSWR ,{preload} from "swr";
 
 const fetcher = (url)=> fetch(url).then((res)=>res.json())
 
-preload('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher)
+// preload('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher)
 
 
 
