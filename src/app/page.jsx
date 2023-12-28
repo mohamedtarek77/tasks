@@ -1,51 +1,58 @@
 
-// import React from "react";
-// import Post from "../components/Post"
-// import AddTaskBtn from "../components/AddTaskBtn"
+import React from "react";
+import Post from "../components/Post"
+import AddTaskBtn from "../components/AddTaskBtn"
 
-// async function getData() {
-//   try {
+async function getData() {
+  try {
 
-//     // const res = await fetch("http://localhost:3000/api/posts/getposts");
-//     const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
+    // const res = await fetch("http://localhost:3000/api/posts/getposts");
+    const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts",
+    
+    // { cache: 'no-store' }
 
-//     // const res = await fetch(`${process.env.DOMAIN}/api/posts/getposts`);
+    {next: { revalidate: 5 },}
+    
+    
+    );
 
-//     if (!res.ok) {
-//       throw new Error("Failed to fetch data");
-//     }
+    // const res = await fetch(`${process.env.DOMAIN}/api/posts/getposts`);
 
-//     return res.json();
-//   } catch (error) {
-//     console.error("Error fetching data:", error);
-//     return null;
-//   }
-// }
+    if (!res.ok) {
+      throw new Error("Failed to fetch data");
+    }
 
-// export default async function Page() {
-//   const data = await getData()
-//   console.log(data)
-//   return (
-//     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2  ">
-//       <>
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+}
 
-//       <div className="flex flex-wrap">
-//             <AddTaskBtn />
+export default async function Page() {
+  const data = await getData()
+  console.log(data)
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2  ">
+      <>
 
-//             {
-//                 data?.data?.map((post) => (
-//                     <Post
-//                         key={post._id}
-//                         post={post}
+      <div className="flex flex-wrap">
+            <AddTaskBtn />
+
+            {
+                data?.data?.map((post) => (
+                    <Post
+                        key={post._id}
+                        post={post}
                 
-//                     />
-//                 ))}
-//         </div>
-//       </>
-//     </main>
+                    />
+                ))}
+        </div>
+      </>
+    </main>
 
-//   );
-// }
+  );
+}
 
 
 
@@ -167,83 +174,83 @@
 
 
 
-'use client'
-import React, { useEffect, useState } from "react";
-import Post from "../components/Post";
-import AddTaskBtn from "../components/AddTaskBtn";
+// 'use client'
+// import React, { useEffect, useState } from "react";
+// import Post from "../components/Post";
+// import AddTaskBtn from "../components/AddTaskBtn";
 
-async function fetchData() {
-  try {
-    const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
+// async function fetchData() {
+//   try {
+//     const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch data");
-    }
+//     if (!res.ok) {
+//       throw new Error("Failed to fetch data");
+//     }
 
-    return res.json();
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
-  }
-}
+//     return res.json();
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//     return null;
+//   }
+// }
 
-export async function getServerSideProps() {
-  try {
-    const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
+// export async function getServerSideProps() {
+//   try {
+//     const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts");
 
-    if (!res.ok) {
-      return {
-        notFound: true,
-      };
-    }
+//     if (!res.ok) {
+//       return {
+//         notFound: true,
+//       };
+//     }
 
-    const data = await res.json();
-    console.log("Server-side data:", data); // Add this line for logging
+//     const data = await res.json();
+//     console.log("Server-side data:", data); // Add this line for logging
 
-    return {
-      props: {
-        data,
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching data during server-side rendering:", error);
-    return {
-      notFound: true,
-    };
-  }
-}
+//     return {
+//       props: {
+//         data,
+//       },
+//     };
+//   } catch (error) {
+//     console.error("Error fetching data during server-side rendering:", error);
+//     return {
+//       notFound: true,
+//     };
+//   }
+// }
 
 
-export default function Page({ data: initialData }) {
-  const [data, setData] = useState(initialData);
+// export default function Page({ data: initialData }) {
+//   const [data, setData] = useState(initialData);
 
-  useEffect(() => {
-    const fetchDataAndSetInterval = async () => {
-      await fetchData(); // Initial fetch
+//   useEffect(() => {
+//     const fetchDataAndSetInterval = async () => {
+//       await fetchData(); // Initial fetch
 
-      const intervalId = setInterval(async () => {
-        const result = await fetchData();
-        setData(result);
-      }, 60000); // Update every 60 seconds
+//       const intervalId = setInterval(async () => {
+//         const result = await fetchData();
+//         setData(result);
+//       }, 60000); // Update every 60 seconds
 
-      // Cleanup function
-      return () => clearInterval(intervalId);
-    };
+//       // Cleanup function
+//       return () => clearInterval(intervalId);
+//     };
 
-    fetchDataAndSetInterval();
-  }, []); // Empty dependency array ensures that the effect runs only once on component mount
+//     fetchDataAndSetInterval();
+//   }, []); // Empty dependency array ensures that the effect runs only once on component mount
 
-  console.log(data);
+//   console.log(data);
 
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2">
-      <div className="flex flex-wrap">
-        <AddTaskBtn />
+//   return (
+//     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2">
+//       <div className="flex flex-wrap">
+//         <AddTaskBtn />
 
-        {data?.data?.map((post) => (
-          <Post key={post._id} post={post} />
-        ))}
-      </div>
-    </main>
-  );
-}
+//         {data?.data?.map((post) => (
+//           <Post key={post._id} post={post} />
+//         ))}
+//       </div>
+//     </main>
+//   );
+// }

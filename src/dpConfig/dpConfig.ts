@@ -5,8 +5,7 @@ import mongoose from "mongoose";
 export async function connect (){
     try {
 
-        // mongoose.connect(process.env.NEXT_PUBLIC_MONGODB_URI!)
-        mongoose.connect('mongodb+srv://blog:blog@cluster0.qz9il.mongodb.net/?retryWrites=true&w=majority')
+        mongoose.connect(process.env.NEXT_PUBLIC_MONGODB_URI!)
 
         const connection = mongoose.connection;
 
