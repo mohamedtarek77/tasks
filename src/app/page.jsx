@@ -6,7 +6,10 @@ import AddTaskBtn from "../components/AddTaskBtn"
 async function getData() {
   try {
 
-    const res = await fetch("http://localhost:3000/api/posts/getposts" ,  {next: { revalidate: 10 },});
+    // const res = await fetch("http://localhost:3000/api/posts/getposts" ,  {next: { revalidate: 10 },});
+    const res = await fetch("https://deluxe-croquembouche-fbf0df.netlify.app/" ,  {next: { revalidate: 10 },});
+
+
     // const res = await fetch("https://tasks-eight-rosy.vercel.app/api/posts/getposts?timestamp=<current-timestamp>",
     
     // // { cache: 'no-store' }
@@ -215,6 +218,10 @@ export default async function Page() {
 //     </main>
 //   );
 // }
+
+
+
+
 
 
 
