@@ -14,7 +14,7 @@ async function getData() {
     // {next: { revalidate: 10 },}
     
     
-    // );
+    // ); 
 
     // const res = await fetch(`${process.env.DOMAIN}/api/posts/getposts`);
 
