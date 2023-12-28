@@ -68,11 +68,9 @@ const fetcher = (url)=> fetch(url).then((res)=>res.json())
 // preload('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher)
 
 
+function Data (){
 
-
-export default async function Page() {
-
-const {data,error}=useSWR('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher)
+  const {data,error}=useSWR('https://tasks-eight-rosy.vercel.app/api/posts/getposts',fetcher)
   console.log(data)
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-800 w-full border border-gray-300 border-2  ">
@@ -92,8 +90,16 @@ const {data,error}=useSWR('https://tasks-eight-rosy.vercel.app/api/posts/getpost
         </div>
       </>
     </main>
+);
 
-  );
+}
+
+
+
+export default async function Page() {
+
+return <Data/>
+  
 }
 
 
